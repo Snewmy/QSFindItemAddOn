@@ -8,7 +8,6 @@ import io.myzticbean.finditemaddon.Models.ShopSearchActivityModel;
 import io.myzticbean.finditemaddon.Utils.LoggerUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.maxgamer.quickshop.api.shop.Shop;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -21,39 +20,6 @@ public class HiddenShopStorageUtil {
     protected static List<HiddenShopModel> hiddenShopsList = new ArrayList<>();
     protected static final String HIDDEN_SHOP_STORAGE_JSON_FILE_NAME = "hiddenShops.json";
 
-    /**
-     * QuickShop Reremake
-     * @param shop
-     */
-    public static void handleShopSearchVisibilityAsync(Shop shop, boolean hideShop) {
-        Bukkit.getScheduler().runTaskAsynchronously(FindItemAddOn.getInstance(), () -> {
-            Iterator<ShopSearchActivityModel> shopSearchActivityIterator = ShopSearchActivityStorageUtil.getGlobalShopsList().iterator();
-            int i = 0;
-            while(shopSearchActivityIterator.hasNext()) {
-                ShopSearchActivityModel shopSearchActivity = shopSearchActivityIterator.next();
-                Location shopLocation = shop.getLocation();
-                if(shopSearchActivity.compareWith(
-                        shopLocation.getWorld().getName(),
-                        shopLocation.getX(),
-                        shopLocation.getY(),
-                        shopLocation.getZ()
-                )) {
-                    ShopSearchActivityStorageUtil.getGlobalShopsList().get(i).setHiddenFromSearch(hideShop);
-                    break;
-                }
-                i++;
-            }
-        });
-//        HiddenShopModel hiddenShop = new HiddenShopModel(
-//                shop.getLocation().getWorld().getName(),
-//                shop.getLocation().getX(),
-//                shop.getLocation().getY(),
-//                shop.getLocation().getZ(),
-//                shop.getLocation().getPitch(),
-//                shop.getLocation().getYaw(),
-//                shop.getOwner().toString());
-//        hiddenShopsList.add(hiddenShop);
-    }
 
     /**
      * QuickShop Hikari
@@ -127,42 +93,6 @@ public class HiddenShopStorageUtil {
 //        }
 //    }
 
-    /**
-     * QuickShop Reremake
-     * @param shop
-     * @return
-     */
-    public static boolean isShopHidden(Shop shop) {
-        for(ShopSearchActivityModel shopSearchActivity : ShopSearchActivityStorageUtil.getGlobalShopsList()) {
-            Location shopLocation = shop.getLocation();
-            if(shopSearchActivity.compareWith(
-                    shopLocation.getWorld().getName(),
-                    shopLocation.getX(),
-                    shopLocation.getY(),
-                    shopLocation.getZ()
-            )) {
-                if(shopSearchActivity.isHiddenFromSearch()) {
-                    return true;
-                }
-                else {
-                    return false;
-                }
-            }
-        }
-        return false;
-//        for(HiddenShopModel hiddenShop : hiddenShopsList) {
-//            if(hiddenShop.getWorldName().equalsIgnoreCase(shop.getLocation().getWorld().getName())
-//                    && hiddenShop.getX() == shop.getLocation().getX()
-//                    && hiddenShop.getY() == shop.getLocation().getY()
-//                    && hiddenShop.getZ() == shop.getLocation().getZ()
-//                    && hiddenShop.getPitch() == shop.getLocation().getPitch()
-//                    && hiddenShop.getYaw() == shop.getLocation().getYaw()
-//                    && Objects.equals(hiddenShop.getShopOwnerUUID(), shop.getOwner().toString())) {
-//                return true;
-//            }
-//        }
-//        return false;
-    }
 
     /**
      * QuickShop Hikari

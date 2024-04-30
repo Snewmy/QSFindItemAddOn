@@ -8,6 +8,7 @@ import io.myzticbean.finditemaddon.Models.PlayerShopVisitModel;
 import io.myzticbean.finditemaddon.Models.ShopSearchActivityModel;
 import io.myzticbean.finditemaddon.QuickShopHandler.QSHikariAPIHandler;
 import io.myzticbean.finditemaddon.Utils.LoggerUtils;
+import io.myzticbean.finditemaddon.Utils.Utils;
 import lombok.Getter;
 import me.kodysimpson.simpapi.colors.ColorTranslator;
 import org.bukkit.Bukkit;
@@ -39,14 +40,15 @@ public class ShopSearchActivityStorageUtil {
 
     /**
      * Returns true if cooldown is not present
+     *
      * @param player
      * @return
      */
     private static boolean handleCooldownIfPresent(Location shopLocation, Player player) {
 
         // New logic
-        for(ShopSearchActivityModel shopSearchActivity : globalShopsList) {
-            if(shopSearchActivity.compareWith(
+        for (ShopSearchActivityModel shopSearchActivity : globalShopsList) {
+            if (shopSearchActivity.compareWith(
                     shopLocation.getWorld().getName(),
                     shopLocation.getX(),
                     shopLocation.getY(),
@@ -59,25 +61,23 @@ public class ShopSearchActivityStorageUtil {
                         .collect(Collectors.toCollection(ArrayList::new));
 
                 boolean isCooldownTimeElapsed;
-                if(playerShopVisitList.size() > 0) {
+                if (playerShopVisitList.size() > 0) {
                     isCooldownTimeElapsed = Instant.now().minusSeconds(
-                            FindItemAddOn.getConfigProvider().SHOP_PLAYER_VISIT_COOLDOWN_IN_MINUTES * 60)
+                                    FindItemAddOn.getConfigProvider().SHOP_PLAYER_VISIT_COOLDOWN_IN_MINUTES * 60)
                             .isAfter(playerShopVisitList.get(playerShopVisitList.size() - 1).getVisitDateTime());
-                }
-                else {
+                } else {
                     isCooldownTimeElapsed = true;
                 }
-                if(isCooldownTimeElapsed) {
-                    LoggerUtils.logDebugInfo(ColorTranslator.translateColorCodes("&6" + player.getName() + " is out of cooldown"));
+                if (isCooldownTimeElapsed) {
+                    LoggerUtils.logDebugInfo(Utils.chat("&6" + player.getName() + " is out of cooldown"));
                     return true;
-                }
-                else {
-                    LoggerUtils.logDebugInfo(ColorTranslator.translateColorCodes("&6" + player.getName() + " still has cooldown"));
+                } else {
+                    LoggerUtils.logDebugInfo(Utils.chat("&6" + player.getName() + " still has cooldown"));
                     return false;
                 }
             }
         }
-        LoggerUtils.logDebugInfo(ColorTranslator.translateColorCodes("&6Shop not found, returning false for cooldown check"));
+        LoggerUtils.logDebugInfo(Utils.chat("&6Shop not found, returning false for cooldown check"));
         return false;
     }
 
@@ -86,36 +86,8 @@ public class ShopSearchActivityStorageUtil {
     }
 
     /**
-     * QuickShop Reremake
-     * @param shop
-     */
-    public void addShop(org.maxgamer.quickshop.api.shop.Shop shop) {
-        for(ShopSearchActivityModel shop_i : globalShopsList) {
-            if(shop_i.getX() == shop.getLocation().getX()
-                && shop_i.getY() == shop.getLocation().getY()
-                && shop_i.getZ() == shop.getLocation().getZ()
-                && shop_i.getWorldName().equalsIgnoreCase(shop.getLocation().getWorld().getName())
-            ) {
-
-                break;
-            }
-        }
-        ShopSearchActivityModel shopModel = new ShopSearchActivityModel(
-                shop.getLocation().getWorld().getName(),
-                shop.getLocation().getX(),
-                shop.getLocation().getY(),
-                shop.getLocation().getZ(),
-                shop.getLocation().getPitch(),
-                shop.getLocation().getYaw(),
-                shop.getOwner().toString(),
-                new ArrayList<>(),
-                false
-        );
-        globalShopsList.add(shopModel);
-    }
-
-    /**
      * QuickShop Hikari
+     *
      * @param shop
      */
     public void addShop(com.ghostchu.quickshop.api.shop.Shop shop) {
@@ -136,14 +108,13 @@ public class ShopSearchActivityStorageUtil {
     public static void loadShopsFromFile() {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         File file = new File(FindItemAddOn.getInstance().getDataFolder().getAbsolutePath() + "/" + SHOP_SEARCH_ACTIVITY_JSON_FILE_NAME);
-        if(file.exists()) {
+        if (file.exists()) {
             try {
                 Reader reader = new FileReader(file);
                 ShopSearchActivityModel[] h = gson.fromJson(reader, ShopSearchActivityModel[].class);
-                if(h != null) {
+                if (h != null) {
                     globalShopsList = new ArrayList<>(Arrays.asList(h));
-                }
-                else {
+                } else {
                     globalShopsList = new ArrayList<>();
                 }
                 LoggerUtils.logInfo("Loaded shops from file");
@@ -172,14 +143,14 @@ public class ShopSearchActivityStorageUtil {
 
     public static void migrateHiddenShopsToShopsJson() {
         File hiddenShopsJsonfile = new File(FindItemAddOn.getInstance().getDataFolder().getAbsolutePath() + "/" + HiddenShopStorageUtil.HIDDEN_SHOP_STORAGE_JSON_FILE_NAME);
-        if(hiddenShopsJsonfile.exists()) {
+        if (hiddenShopsJsonfile.exists()) {
             HiddenShopStorageUtil.loadHiddenShopsFromFile();
-            if(HiddenShopStorageUtil.hiddenShopsList.size() > 0) {
-                for(int globalShopsList_i = 0 ; globalShopsList_i < globalShopsList.size() ; globalShopsList_i++) {
+            if (HiddenShopStorageUtil.hiddenShopsList.size() > 0) {
+                for (int globalShopsList_i = 0; globalShopsList_i < globalShopsList.size(); globalShopsList_i++) {
                     ShopSearchActivityModel shopSearchActivity = globalShopsList.get(globalShopsList_i);
                     HiddenShopModel tempHiddenShop = null;
-                    for(HiddenShopModel hiddenShop_i : HiddenShopStorageUtil.hiddenShopsList) {
-                        if(shopSearchActivity.compareWith(hiddenShop_i.getWorldName(),
+                    for (HiddenShopModel hiddenShop_i : HiddenShopStorageUtil.hiddenShopsList) {
+                        if (shopSearchActivity.compareWith(hiddenShop_i.getWorldName(),
                                 hiddenShop_i.getX(),
                                 hiddenShop_i.getY(),
                                 hiddenShop_i.getZ(),
@@ -195,20 +166,19 @@ public class ShopSearchActivityStorageUtil {
             }
             LoggerUtils.logDebugInfo("Here we will delete the hiddenShops.json");
             hiddenShopsJsonfile.delete();
-        }
-        else {
+        } else {
             LoggerUtils.logDebugInfo("hiddenshops.json: No conversion required");
         }
     }
 
     public static void addPlayerVisitEntryAsync(Location shopLocation, Player visitingPlayer) {
         Bukkit.getScheduler().runTaskAsynchronously(FindItemAddOn.getInstance(), () -> {
-            if(handleCooldownIfPresent(shopLocation, visitingPlayer)) {
+            if (handleCooldownIfPresent(shopLocation, visitingPlayer)) {
                 Iterator<ShopSearchActivityModel> shopSearchActivityIterator = globalShopsList.iterator();
                 int i = 0;
-                while(shopSearchActivityIterator.hasNext()) {
+                while (shopSearchActivityIterator.hasNext()) {
                     ShopSearchActivityModel shopSearchActivity = shopSearchActivityIterator.next();
-                    if(shopSearchActivity.compareWith(
+                    if (shopSearchActivity.compareWith(
                             shopLocation.getWorld().getName(),
                             shopLocation.getX(),
                             shopLocation.getY(),
@@ -228,7 +198,7 @@ public class ShopSearchActivityStorageUtil {
     }
 
     public static int getPlayerVisitCount(Location shopLocation) {
-        for(ShopSearchActivityModel shopSearchActivity : globalShopsList) {
+        for (ShopSearchActivityModel shopSearchActivity : globalShopsList) {
             if (shopSearchActivity.compareWith(
                     shopLocation.getWorld().getName(),
                     shopLocation.getX(),
@@ -243,7 +213,7 @@ public class ShopSearchActivityStorageUtil {
 
     @Nullable
     public static OfflinePlayer getShopOwner(@NotNull Location shopLocation) {
-        for(ShopSearchActivityModel shopSearchActivity : globalShopsList) {
+        for (ShopSearchActivityModel shopSearchActivity : globalShopsList) {
             if (shopSearchActivity.compareWith(
                     shopLocation.getWorld().getName(),
                     shopLocation.getX(),
@@ -259,7 +229,7 @@ public class ShopSearchActivityStorageUtil {
     @Nullable
     public static UUID getShopOwnerUUID(@NotNull Location shopLocation) {
         Iterator<ShopSearchActivityModel> globalShopsListIterator = globalShopsList.iterator();
-        while(globalShopsListIterator.hasNext()) {
+        while (globalShopsListIterator.hasNext()) {
             ShopSearchActivityModel shopSearchActivity = globalShopsListIterator.next();
             if (shopSearchActivity.compareWith(
                     shopLocation.getWorld().getName(),
@@ -271,11 +241,9 @@ public class ShopSearchActivityStorageUtil {
                 try {
                     return UUID.fromString(uuidStr);
                 } catch (IllegalArgumentException e) {
-                    if(!FindItemAddOn.isQSReremakeInstalled()) {
-                        UUID uuid = FindItemAddOn.getQsApiInstance().convertNameToUuid(uuidStr);
-                        int index = globalShopsList.indexOf(shopSearchActivity);
-                        globalShopsList.get(index).setShopOwnerUUID(uuid.toString());
-                    }
+                    UUID uuid = FindItemAddOn.getQsApiInstance().convertNameToUuid(uuidStr);
+                    int index = globalShopsList.indexOf(shopSearchActivity);
+                    globalShopsList.get(index).setShopOwnerUUID(uuid.toString());
                 }
                 return UUID.fromString(shopSearchActivity.getShopOwnerUUID());
             }

@@ -2,7 +2,7 @@ package io.myzticbean.finditemaddon.Commands.SAPICommands;
 
 import io.myzticbean.finditemaddon.FindItemAddOn;
 import io.myzticbean.finditemaddon.Handlers.CommandHandler.CmdExecutorHandler;
-import me.kodysimpson.simpapi.colors.ColorTranslator;
+import io.myzticbean.finditemaddon.Utils.Utils;
 import me.kodysimpson.simpapi.command.SubCommand;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Material;
@@ -18,18 +18,10 @@ import java.util.List;
  */
 public class SellSubCmd extends SubCommand {
 
-    private final String sellSubCommand;
     private final List<String> itemsList = new ArrayList<>();
     private final CmdExecutorHandler cmdExecutor;
 
     public SellSubCmd() {
-        // to-sell
-        if(StringUtils.isBlank(FindItemAddOn.getConfigProvider().FIND_ITEM_TO_SELL_AUTOCOMPLETE)) {
-            sellSubCommand = "TO_SELL";
-        }
-        else {
-            sellSubCommand = FindItemAddOn.getConfigProvider().FIND_ITEM_TO_SELL_AUTOCOMPLETE;
-        }
         if(itemsList.isEmpty()) {
             for(Material mat : Material.values()) {
                 itemsList.add(mat.name());
@@ -40,8 +32,9 @@ public class SellSubCmd extends SubCommand {
 
     @Override
     public String getName() {
-        return sellSubCommand;
+        return "";
     }
+
 
     @Override
     public List<String> getAliases() {
@@ -55,17 +48,12 @@ public class SellSubCmd extends SubCommand {
 
     @Override
     public String getSyntax() {
-        return "/finditem " + sellSubCommand + " {item type | item name}";
+        return "";
     }
+
 
     @Override
     public void perform(CommandSender commandSender, String[] args) {
-        if(args.length != 2)
-            commandSender.sendMessage(ColorTranslator.translateColorCodes(
-                    FindItemAddOn.getConfigProvider().PLUGIN_PREFIX
-                            + FindItemAddOn.getConfigProvider().FIND_ITEM_CMD_INCORRECT_USAGE_MSG));
-        else
-            cmdExecutor.handleShopSearch(sellSubCommand, commandSender, args[1]);
     }
 
     @Override

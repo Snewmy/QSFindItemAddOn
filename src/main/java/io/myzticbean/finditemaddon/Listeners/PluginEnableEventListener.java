@@ -8,14 +8,12 @@ import org.bukkit.event.server.PluginEnableEvent;
 public class PluginEnableEventListener implements Listener {
     @EventHandler
     public void onPluginEnable(PluginEnableEvent event) {
-        if(!FindItemAddOn.isQSReremakeInstalled() && !FindItemAddOn.isQSHikariInstalled()) {
+        if(!FindItemAddOn.isQSHikariInstalled()) {
 //            if(!event.getPlugin().getName().equalsIgnoreCase("QuickShop")
 //                    && !event.getPlugin().getName().equalsIgnoreCase("QuickShop-Hikari")) {
 //                // do nothing
 //            }
-            if(event.getPlugin().getName().equalsIgnoreCase("QuickShop") && !FindItemAddOn.isQSHikariInstalled()) {
-                FindItemAddOn.setQSReremakeInstalled(true);
-            } else if (event.getPlugin().getName().equalsIgnoreCase("QuickShop-Hikari") && !FindItemAddOn.isQSReremakeInstalled()) {
+            if (event.getPlugin().getName().equalsIgnoreCase("QuickShop-Hikari")) {
                 FindItemAddOn.setQSHikariInstalled(true);
             }
         }

@@ -15,24 +15,15 @@ import java.util.List;
  */
 public class RevealShopSubCmd extends SubCommand {
 
-    private final String revealShopSubCommand;
     private final CmdExecutorHandler cmdExecutor;
 
     public RevealShopSubCmd() {
-        if(StringUtils.isEmpty(FindItemAddOn.getConfigProvider().FIND_ITEM_REVEALSHOP_AUTOCOMPLETE)
-                || StringUtils.containsIgnoreCase(
-                        FindItemAddOn.getConfigProvider().FIND_ITEM_REVEALSHOP_AUTOCOMPLETE, " ")) {
-            revealShopSubCommand = "revealshop";
-        }
-        else {
-            revealShopSubCommand = FindItemAddOn.getConfigProvider().FIND_ITEM_REVEALSHOP_AUTOCOMPLETE;
-        }
         cmdExecutor = new CmdExecutorHandler();
     }
 
     @Override
     public String getName() {
-        return revealShopSubCommand;
+        return "";
     }
 
     @Override
@@ -47,8 +38,9 @@ public class RevealShopSubCmd extends SubCommand {
 
     @Override
     public String getSyntax() {
-        return "/finditem " + revealShopSubCommand;
+        return "";
     }
+
 
     @Override
     public void perform(CommandSender commandSender, String[] args) {

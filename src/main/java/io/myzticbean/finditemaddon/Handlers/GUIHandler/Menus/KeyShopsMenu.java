@@ -31,20 +31,10 @@ import java.util.*;
  *
  * @author myzticbean
  */
-public class FoundShopsMenu extends PaginatedMenu {
+public class KeyShopsMenu extends FoundShopsMenu {
 
-    ShopCategory shopCategory;
-    Material material;
-    public static final String SHOP_STOCK_UNLIMITED = "Unlimited";
-    public static final String SHOP_STOCK_UNKNOWN = "Unknown";
 
-    public FoundShopsMenu(PlayerMenuUtility playerMenuUtility, List<FoundShopItemModel> searchResult, ShopCategory shopCategory, Material material) {
-        super(playerMenuUtility, searchResult);
-        this.shopCategory = shopCategory;
-        this.material = material;
-    }
-
-    public FoundShopsMenu(PlayerMenuUtility playerMenuUtility, List<FoundShopItemModel> searchResult) {
+    public KeyShopsMenu(PlayerMenuUtility playerMenuUtility, List<FoundShopItemModel> searchResult) {
         super(playerMenuUtility, searchResult);
     }
 
@@ -58,8 +48,7 @@ public class FoundShopsMenu extends PaginatedMenu {
         }
          */
 
-        FormatItem formatItem = new FormatItem(material);
-        return Utils.chat("&l» &r" + formatItem.getName() + " Shops");
+        return Utils.chat("&l» &rCrate Key Shops");
     }
 
     @Override
@@ -87,7 +76,8 @@ public class FoundShopsMenu extends PaginatedMenu {
         }
         // Issue #31: Removing condition 'event.getCurrentItem().getType().equals(Material.BARRIER)'
         else if (event.getSlot() == 49) {
-            returnToCategory(shopCategory, (Player) event.getWhoClicked());
+            ShopMenu shopMenu = new ShopMenu(FindItemAddOn.getPlayerMenuUtility((Player) event.getWhoClicked()));
+            shopMenu.open();
         } else if (event.getCurrentItem().getType().equals(Material.AIR)) {
             // do nothing
             LoggerUtils.logDebugInfo(event.getWhoClicked().getName() + " just clicked on AIR!");
@@ -163,68 +153,6 @@ public class FoundShopsMenu extends PaginatedMenu {
             }
         }
     }
-
-    public void handleMenuClickForNavToNextPage(InventoryClickEvent event) {
-        if (!((index + 1) >= super.playerMenuUtility.getPlayerShopSearchResult().size())) {
-            page = page + 1;
-            super.open(super.playerMenuUtility.getPlayerShopSearchResult());
-        } else {
-            if (!StringUtils.isEmpty(FindItemAddOn.getConfigProvider().SHOP_NAV_LAST_PAGE_ALERT_MSG)) {
-                event.getWhoClicked().sendMessage(
-                        Utils.chat(FindItemAddOn.getConfigProvider().PLUGIN_PREFIX + FindItemAddOn.getConfigProvider().SHOP_NAV_LAST_PAGE_ALERT_MSG));
-            }
-        }
-    }
-
-    public void handleMenuClickForNavToPrevPage(InventoryClickEvent event) {
-        if (page == 0) {
-            if (!StringUtils.isEmpty(FindItemAddOn.getConfigProvider().SHOP_NAV_FIRST_PAGE_ALERT_MSG)) {
-                event.getWhoClicked().sendMessage(
-                        Utils.chat(FindItemAddOn.getConfigProvider().PLUGIN_PREFIX
-                                + FindItemAddOn.getConfigProvider().SHOP_NAV_FIRST_PAGE_ALERT_MSG));
-            }
-        } else {
-            page = page - 1;
-            super.open(super.playerMenuUtility.getPlayerShopSearchResult());
-        }
-    }
-
-    public void handleFirstPageClick(InventoryClickEvent event) {
-        if (page == 0) {
-            if (!StringUtils.isEmpty(FindItemAddOn.getConfigProvider().SHOP_NAV_FIRST_PAGE_ALERT_MSG)) {
-                event.getWhoClicked().sendMessage(
-                        Utils.chat(
-                                FindItemAddOn.getConfigProvider().PLUGIN_PREFIX
-                                        + FindItemAddOn.getConfigProvider().SHOP_NAV_FIRST_PAGE_ALERT_MSG));
-            }
-        } else {
-            page = 0;
-            super.open(super.playerMenuUtility.getPlayerShopSearchResult());
-        }
-    }
-
-    public void handleLastPageClick(InventoryClickEvent event) {
-        int listSize = super.playerMenuUtility.getPlayerShopSearchResult().size();
-        if (!((index + 1) >= listSize)) {
-            double totalPages = listSize / maxItemsPerPage;
-            if (totalPages % 10 == 0) {
-                page = (int) Math.floor(totalPages);
-                LoggerUtils.logDebugInfo("Floor page value: " + page);
-            } else {
-                page = (int) Math.ceil(totalPages);
-                LoggerUtils.logDebugInfo("Ceiling page value: " + page);
-            }
-            super.open(super.playerMenuUtility.getPlayerShopSearchResult());
-        } else {
-            if (!StringUtils.isEmpty(FindItemAddOn.getConfigProvider().SHOP_NAV_LAST_PAGE_ALERT_MSG)) {
-                event.getWhoClicked().sendMessage(
-                        Utils.chat(
-                                FindItemAddOn.getConfigProvider().PLUGIN_PREFIX
-                                        + FindItemAddOn.getConfigProvider().SHOP_NAV_LAST_PAGE_ALERT_MSG));
-            }
-        }
-    }
-
 
     /**
      * Empty method in case we need to handle static GUI icons in future
@@ -305,97 +233,6 @@ public class FoundShopsMenu extends PaginatedMenu {
                 }
                 guiSlotCounter++;
             }
-        }
-    }
-
-    /**
-     * Replaces all the placeholders in the Shop item lore in GUI
-     * @param text Line of lore
-     * @param shop Shop instance
-     * @return Line of lore replaced with placeholder values
-     */
-    public String replaceLorePlaceholders(String text, FoundShopItemModel shop) {
-
-        if(text.contains(ShopLorePlaceholders.ITEM_PRICE.value())) {
-            text = text.replace(ShopLorePlaceholders.ITEM_PRICE.value(), String.valueOf(shop.getShopPrice()));
-        }
-        if(text.contains(ShopLorePlaceholders.SHOP_STOCK.value())) {
-            if(shop.getRemainingStockOrSpace() == -2) {
-                // if -2 (cache doesn't have value) -> try to fetch from MAIN thread
-                int stockOrSpace = processUnknownStockSpace(shop);
-                if(stockOrSpace == -2) {
-                    text = text.replace(ShopLorePlaceholders.SHOP_STOCK.value(), SHOP_STOCK_UNKNOWN);
-                }
-                else {
-                    text = text.replace(ShopLorePlaceholders.SHOP_STOCK.value(),
-                            (stockOrSpace == -1 ? SHOP_STOCK_UNLIMITED : String.valueOf(stockOrSpace)));
-                }
-            } else if(shop.getRemainingStockOrSpace() == Integer.MAX_VALUE) {
-                text = text.replace(ShopLorePlaceholders.SHOP_STOCK.value(), SHOP_STOCK_UNLIMITED);
-            } else {
-                text = text.replace(ShopLorePlaceholders.SHOP_STOCK.value(), String.valueOf(shop.getRemainingStockOrSpace()));
-            }
-        }
-        if(text.contains(ShopLorePlaceholders.SHOP_OWNER.value())) {
-            OfflinePlayer shopOwner = Bukkit.getOfflinePlayer(shop.getShopOwner());
-            if(shopOwner.getName() != null) {
-                text = text.replace(ShopLorePlaceholders.SHOP_OWNER.value(), shopOwner.getName());
-            }
-            else {
-                // set a generic name for shops with no owner name
-                text = text.replace(ShopLorePlaceholders.SHOP_OWNER.value(), "Admin");
-            }
-        }
-        if(text.contains(ShopLorePlaceholders.SHOP_LOCATION.value())) {
-            text = text.replace(ShopLorePlaceholders.SHOP_LOCATION.value(),
-                    shop.getShopLocation().getBlockX() + ", "
-                            + shop.getShopLocation().getBlockY() + ", "
-                            + shop.getShopLocation().getBlockZ());
-        }
-        if(text.contains(ShopLorePlaceholders.SHOP_WORLD.value())) {
-            text = text.replace(ShopLorePlaceholders.SHOP_WORLD.value(), Objects.requireNonNull(shop.getShopLocation().getWorld()).getName());
-        }
-        // Added in v2.0
-        if(text.contains(ShopLorePlaceholders.SHOP_VISITS.value())) {
-            text = text.replace(ShopLorePlaceholders.SHOP_VISITS.value(), String.valueOf(ShopSearchActivityStorageUtil.getPlayerVisitCount(shop.getShopLocation())));
-        }
-        return text;
-    }
-
-    public String replaceDelayPlaceholder(String tpDelayMsg, long delay) {
-        return tpDelayMsg.replace("{DELAY}", String.valueOf(delay));
-    }
-
-    private int processUnknownStockSpace(FoundShopItemModel shop) {
-        return FindItemAddOn.getQsApiInstance().processUnknownStockSpace(shop.getShopLocation(), shop.isToBuy());
-    }
-
-    public void returnToCategory(ShopCategory shopCategory, Player player) {
-        switch (shopCategory) {
-            case POTIONS:
-                PotionsMenu potionsMenu = new PotionsMenu(FindItemAddOn.getPlayerMenuUtility(player));
-                potionsMenu.open();
-                break;
-            case MISCELLANEOUS:
-                MiscMenu miscMenu = new MiscMenu(FindItemAddOn.getPlayerMenuUtility(player));
-                miscMenu.open();
-                break;
-            case FARMING:
-                FarmingMenu farmingMenu = new FarmingMenu(FindItemAddOn.getPlayerMenuUtility(player));
-                farmingMenu.open();
-                break;
-            case MINERALS:
-                MineralsMenu mineralsMenu = new MineralsMenu(FindItemAddOn.getPlayerMenuUtility(player));
-                mineralsMenu.open();
-                break;
-            case REDSTONE_ITEMS:
-                RedstoneMenu redstoneMenu = new RedstoneMenu(FindItemAddOn.getPlayerMenuUtility(player));
-                redstoneMenu.open();
-                break;
-            case BUILDING_BLOCKS:
-                BuildingMenu buildingMenu = new BuildingMenu(FindItemAddOn.getPlayerMenuUtility(player));
-                buildingMenu.open();
-                break;
         }
     }
 }

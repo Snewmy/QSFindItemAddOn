@@ -334,15 +334,9 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.github.KodySimpson</groupId>
+            <groupId>com.github.Cortex-MC</groupId>
             <artifactId>SimpAPI</artifactId>
             <version>4.3.2</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>*</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>

@@ -1,14 +1,16 @@
-name: QSFindItemAddOn
+name: CloudShopSearch
 version: ${project.version}
 main: io.myzticbean.finditemaddon.FindItemAddOn
 api-version: 1.16
-authors: [ myzticbean ]
+authors: [ Sam ]
 softdepend:
   - QuickShop
   - QuickShop-Hikari
   - PlayerWarps
   - WorldGuard
   - Essentials
+  - ExcellentCrates
+  - NexEngine
 
 permissions:
   finditem.use:

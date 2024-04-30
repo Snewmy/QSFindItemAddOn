@@ -11,6 +11,7 @@ public enum PlayerPerms {
     FINDITEM_USE("finditem.use"),
     FINDITEM_HIDESHOP("finditem.hideshop"),
     FINDITEM_RELOAD("finditem.reload"),
+    FINDITEM_SHOP("finditem.shop"),
 
     @Deprecated
     FINDITEM_RESTART("finditem.restart"),

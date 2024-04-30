@@ -15,23 +15,17 @@ import java.util.List;
  */
 public class HideShopSubCmd extends SubCommand {
 
-    private final String hideSubCommand;
     private final CmdExecutorHandler cmdExecutor;
 
     public HideShopSubCmd() {
-        if(StringUtils.isBlank(FindItemAddOn.getConfigProvider().FIND_ITEM_HIDESHOP_AUTOCOMPLETE)) {
-            hideSubCommand = "hideshop";
-        }
-        else {
-            hideSubCommand = FindItemAddOn.getConfigProvider().FIND_ITEM_HIDESHOP_AUTOCOMPLETE;
-        }
         cmdExecutor = new CmdExecutorHandler();
     }
 
     @Override
     public String getName() {
-        return hideSubCommand;
+        return "";
     }
+
 
     @Override
     public List<String> getAliases() {
@@ -46,7 +40,7 @@ public class HideShopSubCmd extends SubCommand {
 
     @Override
     public String getSyntax() {
-        return "/finditem " + hideSubCommand;
+        return "";
     }
 
     @Override

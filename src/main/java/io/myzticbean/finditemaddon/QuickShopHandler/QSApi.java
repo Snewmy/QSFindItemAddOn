@@ -4,6 +4,7 @@ import io.myzticbean.finditemaddon.FindItemAddOn;
 import io.myzticbean.finditemaddon.Models.FoundShopItemModel;
 import io.myzticbean.finditemaddon.Models.ShopSearchActivityModel;
 import io.myzticbean.finditemaddon.Utils.LoggerUtils;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -35,6 +36,14 @@ public interface QSApi<QSType, Shop> {
     List<FoundShopItemModel> findItemBasedOnTypeFromAllShops(ItemStack item, boolean toBuy, Player searchingPlayer);
 
     /**
+     * Search for crate keys
+     * @param toBuy
+     * @param searchingPlayer
+     * @return
+     */
+    List<FoundShopItemModel> findItemCrateKeysFromAllShops(boolean toBuy, Player searchingPlayer);
+
+    /**
      * Search based on display name of item from all server shops
      * @param displayName
      * @param toBuy
@@ -56,6 +65,8 @@ public interface QSApi<QSType, Shop> {
     Shop findShopAtLocation(Block block);
 
     boolean isShopOwnerCommandRunner(Player player, Shop shop);
+
+    int processUnknownStockSpace(Location shopLoc, boolean toBuy);
 
     List<Shop> getAllShops();
 
