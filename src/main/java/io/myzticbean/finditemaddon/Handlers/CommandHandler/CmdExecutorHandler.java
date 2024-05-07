@@ -8,6 +8,7 @@ import io.myzticbean.finditemaddon.Utils.Defaults.PlayerPerms;
 import io.myzticbean.finditemaddon.Utils.JsonStorageUtils.HiddenShopStorageUtil;
 import io.myzticbean.finditemaddon.Utils.LoggerUtils;
 import io.myzticbean.finditemaddon.Utils.Utils;
+import io.myzticbean.finditemaddon.Utils.WarpUtils.WarpUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -190,6 +191,7 @@ public class CmdExecutorHandler {
             } else {
                 LoggerUtils.logInfo("&aFound &e" + allServerShops.size() + " &ashops on the server.");
             }
+            WarpUtils.updateWarps();
         } else {
             Player player = (Player) commandSender;
             if (player.hasPermission(PlayerPerms.FINDITEM_RELOAD.value()) || player.hasPermission(PlayerPerms.FINDITEM_ADMIN.value())) {
@@ -210,6 +212,7 @@ public class CmdExecutorHandler {
             } else {
                 player.sendMessage(Utils.chat(FindItemAddOn.getConfigProvider().PLUGIN_PREFIX + "&cNo permission!"));
             }
+            WarpUtils.updateWarps();
         }
     }
 

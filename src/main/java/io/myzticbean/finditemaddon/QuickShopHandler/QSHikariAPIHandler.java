@@ -26,7 +26,6 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import su.nightexpress.excellentcrates.ExcellentCratesAPI;
 
 import java.nio.charset.StandardCharsets;
 import java.sql.ResultSet;
@@ -64,8 +63,7 @@ public class QSHikariAPIHandler implements QSApi<QuickShop, Shop> {
         LoggerUtils.logDebugInfo("Is MAIN Thread?" + Bukkit.isPrimaryThread());
         long begin = System.currentTimeMillis();
         List<FoundShopItemModel> shopsFoundList = new ArrayList<>();
-        List<Shop> allShops;
-        allShops = getAllShops();
+        List<Shop> allShops = fetchAllShopsFromQS();
         LoggerUtils.logDebugInfo(QS_TOTAL_SHOPS_ON_SERVER + allShops.size());
         for (Shop shopIterator : allShops) {
 
@@ -112,8 +110,7 @@ public class QSHikariAPIHandler implements QSApi<QuickShop, Shop> {
         LoggerUtils.logDebugInfo("Is MAIN Thread?" + Bukkit.isPrimaryThread());
         long begin = System.currentTimeMillis();
         List<FoundShopItemModel> shopsFoundList = new ArrayList<>();
-        List<Shop> allShops;
-        allShops = getAllShops();
+        List<Shop> allShops = fetchAllShopsFromQS();
         LoggerUtils.logDebugInfo(QS_TOTAL_SHOPS_ON_SERVER + allShops.size());
         for (Shop shopIterator : allShops) {
 

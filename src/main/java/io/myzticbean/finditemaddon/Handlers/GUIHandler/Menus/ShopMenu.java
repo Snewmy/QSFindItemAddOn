@@ -3,6 +3,7 @@ package io.myzticbean.finditemaddon.Handlers.GUIHandler.Menus;
 import io.myzticbean.finditemaddon.FindItemAddOn;
 import io.myzticbean.finditemaddon.Handlers.GUIHandler.Menu;
 import io.myzticbean.finditemaddon.Handlers.GUIHandler.PlayerMenuUtility;
+import io.myzticbean.finditemaddon.Handlers.GUIHandler.SearchType;
 import io.myzticbean.finditemaddon.Handlers.GUIHandler.ShopCategory;
 import io.myzticbean.finditemaddon.Models.FoundShopItemModel;
 import io.myzticbean.finditemaddon.Utils.Defaults.PlayerPerms;
@@ -149,7 +150,7 @@ public class ShopMenu extends Menu {
                             }
                         }
                          */
-                    KeyShopsMenu menu = new KeyShopsMenu(FindItemAddOn.getPlayerMenuUtility(player), searchResultList);
+                    KeyShopsMenu menu = new KeyShopsMenu(FindItemAddOn.getPlayerMenuUtility(player), searchResultList, ShopCategory.CRATE_KEYS, isBuying, SearchType.CRATE_KEY);
                     Bukkit.getScheduler().runTask(FindItemAddOn.getInstance(), () -> menu.open(searchResultList));
                 });
             }

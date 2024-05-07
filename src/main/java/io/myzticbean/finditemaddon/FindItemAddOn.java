@@ -3,6 +3,7 @@ package io.myzticbean.finditemaddon;
 import io.myzticbean.finditemaddon.Commands.SAPICommands.*;
 import io.myzticbean.finditemaddon.ConfigUtil.ConfigProvider;
 import io.myzticbean.finditemaddon.ConfigUtil.ConfigSetup;
+import io.myzticbean.finditemaddon.Dependencies.PlayerWarpsPlugin;
 import io.myzticbean.finditemaddon.Handlers.GUIHandler.Menus.ShopMenu;
 import io.myzticbean.finditemaddon.Handlers.GUIHandler.PlayerMenuUtility;
 import io.myzticbean.finditemaddon.Listeners.*;
@@ -16,16 +17,13 @@ import io.myzticbean.finditemaddon.Utils.LoggerUtils;
 import io.myzticbean.finditemaddon.Utils.Utils;
 import me.kodysimpson.simpapi.command.CommandManager;
 import me.kodysimpson.simpapi.command.SubCommand;
-import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
-import su.nightexpress.excellentcrates.ExcellentCratesAPI;
-import su.nightexpress.excellentcrates.ExcellentCratesPlugin;
+import su.nightexpress.excellentcrates.CratesAPI;
+import su.nightexpress.excellentcrates.CratesPlugin;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -40,7 +38,7 @@ public final class FindItemAddOn extends JavaPlugin {
     private static boolean qSHikariInstalled = false;
     private static QSApi qsApi;
     public static boolean isExcellentCratesInstalled = false;
-    public ExcellentCratesPlugin excellentCrates = null;
+    public CratesPlugin excellentCrates = null;
 
     private static final HashMap<Player, PlayerMenuUtility> playerMenuUtilityMap = new HashMap<>();
 
@@ -68,7 +66,7 @@ public final class FindItemAddOn extends JavaPlugin {
 
         if (Bukkit.getPluginManager().isPluginEnabled("ExcellentCrates")) {
             isExcellentCratesInstalled = true;
-            this.excellentCrates = ExcellentCratesAPI.PLUGIN;
+            this.excellentCrates = CratesAPI.PLUGIN;
         }
 
         // Registering Bukkit event listeners
@@ -147,6 +145,7 @@ public final class FindItemAddOn extends JavaPlugin {
         // v2.0.0 - Migrating hiddenShops.json to shops.json
         ShopSearchActivityStorageUtil.migrateHiddenShopsToShopsJson();
 
+        PlayerWarpsPlugin.setup();
         initExternalPluginEventListeners();
 
         // Initiate batch tasks
@@ -175,6 +174,10 @@ public final class FindItemAddOn extends JavaPlugin {
 
     private void initExternalPluginEventListeners() {
         LoggerUtils.logInfo("Registering external plugin event listeners");
+        if(PlayerWarpsPlugin.getIsEnabled()) {
+            this.getServer().getPluginManager().registerEvents(new PWPlayerWarpRemoveEventListener(), this);
+            this.getServer().getPluginManager().registerEvents(new PWPlayerWarpCreateEventListener(), this);
+        }
     }
 
     public static ConfigProvider getConfigProvider() {

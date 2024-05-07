@@ -4,10 +4,7 @@ import com.ghostchu.quickshop.api.QuickShopAPI;
 import com.ghostchu.quickshop.api.shop.Shop;
 import com.ghostchu.quickshop.api.shop.ShopType;
 import io.myzticbean.finditemaddon.FindItemAddOn;
-import io.myzticbean.finditemaddon.Handlers.GUIHandler.CategoryPaginated;
-import io.myzticbean.finditemaddon.Handlers.GUIHandler.PaginatedMenu;
-import io.myzticbean.finditemaddon.Handlers.GUIHandler.PlayerMenuUtility;
-import io.myzticbean.finditemaddon.Handlers.GUIHandler.ShopCategory;
+import io.myzticbean.finditemaddon.Handlers.GUIHandler.*;
 import io.myzticbean.finditemaddon.Models.FoundShopItemModel;
 import io.myzticbean.finditemaddon.Utils.Defaults.PlayerPerms;
 import io.myzticbean.finditemaddon.Utils.Defaults.ShopLorePlaceholders;
@@ -113,7 +110,7 @@ public class PotionsMenu extends CategoryPaginated {
                             }
                         }
                          */
-                        FoundShopsMenu menu = new FoundShopsMenu(FindItemAddOn.getPlayerMenuUtility(player), searchResultList, ShopCategory.POTIONS, mat);
+                        FoundShopsMenu menu = new FoundShopsMenu(FindItemAddOn.getPlayerMenuUtility(player), searchResultList, ShopCategory.POTIONS, mat, isBuying, SearchType.NORMAL);
                         Bukkit.getScheduler().runTask(FindItemAddOn.getInstance(), () -> menu.open(searchResultList));
                     });
                 }
